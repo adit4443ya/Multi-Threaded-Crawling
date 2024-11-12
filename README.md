@@ -210,6 +210,48 @@ This header file defines the `WebCrawler` class, which is the main component of 
 
 ---
 
+
+Here's a concise command snippet for contributors with inline comments explaining each step. This makes it easy to copy-paste while ensuring clarity on each action.
+
+---
+
+### Contributing Guide (Quick Commands)
+
+```bash
+# 1. Clone your forked repo
+git clone https://github.com/your-username/repo-name.git
+cd repo-name
+
+# 2. Add upstream remote to keep up with the original repo
+git remote add upstream https://github.com/original-owner/repo-name.git
+git fetch upstream
+
+# 3. Create a new branch for your feature/fix
+git checkout -b feature-or-fix-description
+
+# 4. Before making changes, ensure your local main branch is up-to-date
+git checkout main
+git fetch upstream
+git rebase upstream/main
+
+# 5. Rebase your feature branch onto the updated main branch
+git checkout feature-or-fix-description
+git rebase main
+
+# 6. Make your changes, then stage and commit with a descriptive message
+git add .
+git commit -m "Description of changes"
+
+# 7. Push your branch to your fork
+git push origin feature-or-fix-description
+
+# 8. If updates happen on upstream/main while your PR is open, keep your branch updated:
+git fetch upstream                # Get latest updates from the original repo
+git rebase upstream/main           # Rebase your feature branch onto it
+git push origin feature-or-fix-description --force  # Force-push updated branch
+
+```
+
 ## Conclusion
 
 This web crawler project is a multi-threaded application that effectively crawls websites, extracts relevant metadata, and handles rate-limiting for domains. With its modular design, it is easy to extend or modify the functionality for additional use cases. You can adjust the number of worker threads, crawl depth, and domain request delay for optimized performance based on your requirements.
