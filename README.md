@@ -128,7 +128,7 @@ make
 To start crawling from a seed URL, run:
 
 ```bash
-./web_crawler https://www.example.com
+./web_crawler javatpoint.com
 ```
 
 Replace `https://www.example.com` with the desired seed URL.
