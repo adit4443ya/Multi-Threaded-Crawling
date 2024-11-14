@@ -17,11 +17,7 @@ This project is a multi-threaded web crawler built in C++. It uses the `Curl` li
 - [Cloning the Repository](#cloning-the-repository)
 - [Building the Project](#building-the-project)
 - [Running the Web Crawler](#running-the-web-crawler)
-- [Header File Documentation](#header-file-documentation)
-  - [`thread_safe_queue.h`](#thread_safe_queueh)
-  - [`page_metadata.h`](#page_metadath)
-  - [`utils.h`](#utilsh)
-  - [`web_crawler.h`](#web_crawlerh)
+- [Getting Started](#contributing-guide)
 
 ---
 
@@ -110,108 +106,25 @@ cd web-crawler
 
 ---
 
-### 3. Build the Project
+### 3. Run the Project
 
-Create a `build` directory, generate the necessary files with `cmake`, and compile the project:
+Create a `obj` directory, generate the necessary files with `make`, and compile the project:
 
 ```bash
-mkdir build
-cd build
-cmake ..
-make
+./make.sh
 ```
 
 ---
 
 ### 4. Run the Web Crawler
 
-To start crawling from a seed URL, run:
+To start crawling from a seed URL, thread, Max Depth, run:
 
 ```bash
-./web_crawler javatpoint.com
+./bin/web_crawler javatpoint.com 16 3
 ```
 
-Replace `https://www.example.com` with the desired seed URL.
-
----
-
-## Header File Documentation
-
-This section provides detailed documentation for the main header files used in the project.
-
-### `thread_safe_queue.h`
-
-This header file defines a thread-safe implementation of a queue data structure.
-
-#### `ThreadSafeQueue` Class
-
-- **`push(T value)`**: Adds a new element to the end of the queue.
-- **`try_pop(T& value)`**: Removes and returns the element at the front of the queue. Returns `false` if the queue is empty.
-- **`empty() const`**: Returns `true` if the queue is empty, `false` otherwise.
-- **`size() const`**: Returns the number of elements in the queue.
-
-The class uses `std::mutex` and `std::condition_variable` to ensure thread safety.
-
----
-
-### `page_metadata.h`
-
-This header file defines the `PageMetadata` struct, which holds information about a crawled web page.
-
-#### `PageMetadata` Struct
-
-- **`url`**: The URL of the web page.
-- **`title`**: The title of the web page.
-- **`description`**: The meta description of the web page.
-- **`links`**: A vector of URLs that are links on the web page.
-- **`depth`**: The depth of the web page in the crawl hierarchy.
-
----
-
-### `utils.h`
-
-This header file declares a utility function for extracting the domain from a given URL.
-
-#### `getDomain(const std::string& url)`
-
-- **Input**: A URL as a string (e.g., `https://www.example.com/path/to/page.html`).
-- **Output**: The domain portion of the URL (e.g., `example.com`).
-
----
-
-### `web_crawler.h`
-
-This header file defines the `WebCrawler` class, which is the main component of the web crawler application.
-
-#### `WebCrawler` Class
-
-##### Private Members:
-
-- **`urlQueue`**: A `ThreadSafeQueue` that holds the URLs to be crawled.
-- **`visitedUrls`**: An `unordered_set` that tracks visited URLs.
-- **`visitedMutex`**: A `mutex` for protecting the `visitedUrls` set from race conditions.
-- **`workers`**: A vector of `std::thread` objects representing worker threads.
-- **`shouldStop`**: An `std::atomic<bool>` flag used to signal worker threads to stop.
-- **`maxDepth`**: The maximum crawl depth.
-- **`numThreads`**: The number of worker threads to use.
-- **`threadFiles`**: A vector of `std::ofstream` objects for writing crawled data.
-- **`filesMutex`**: A `mutex` to protect the `threadFiles` vector from race conditions.
-- **`activeThreads`**: An `std::atomic<int>` to track active worker threads.
-- **`domainLastRequest`**: An `unordered_map` for rate limiting based on the last request time for each domain.
-- **`domainDelay`**: The delay (in milliseconds) between requests to the same domain.
-
-##### Public Methods:
-
-- **`WebCrawler(int threads = 4, int depth = 3, int delayMs = 1000)`**: Constructor that initializes the crawler with the specified number of threads, maximum depth, and domain delay.
-- **`~WebCrawler()`**: Destructor that stops the crawler and cleans up resources.
-- **`start(const std::string& seedUrl)`**: Starts the crawling process from the specified seed URL.
-- **`stop()`**: Stops the crawling process.
-- **`waitForCompletion()`**: Waits for the crawling process to complete.
-
----
-
-
-Here's a concise command snippet for contributors with inline comments explaining each step. This makes it easy to copy-paste while ensuring clarity on each action.
+Replace `https://www.javatpoint.com` with the desired seed URL.
 
 ---
 

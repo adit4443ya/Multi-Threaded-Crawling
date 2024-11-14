@@ -13,7 +13,7 @@
 class WebCrawler
 {
 private:
-    ThreadSafeQueue<std::string> urlQueue;
+    ThreadSafeQueue<std::pair<std::string,int>> urlQueue;
     std::unordered_set<std::string> visitedUrls;
     std::mutex visitedMutex;
     std::vector<std::thread> workers;
