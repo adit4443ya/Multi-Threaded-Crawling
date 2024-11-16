@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Child process
+    // Child process to run the web crawling
     try
     {
         pid_t pid = fork();
@@ -52,15 +52,43 @@ int main(int argc, char *argv[])
                 if (exitStatus == 0)
                 {
                     std::cout << "Crawling completed successfully!" << std::endl;
+                    
+                    // Now, for upload.js (run as a new child process)
+                    pid_t uploadPid = fork();
+                    if (uploadPid < 0)
+                    {
+                        std::cerr << "Error: Fork for upload.js failed." << std::endl;
+                        return 1;
+                    }
+                    if (uploadPid == 0)
+                    {
+                        // Child process runs Node.js to execute upload.js
+                        execlp("node", "node", "upload.js", (char *)NULL); // Run upload.js using Node.js
+                        std::cerr << "Error: Failed to execute upload.js." << std::endl;
+                        exit(1);  // Ensure child process exits on failure
+                    }
+                    else
+                    {
+                        // Wait for upload.js to finish
+                        waitpid(uploadPid, &status, 0);
+                        if (WIFEXITED(status))
+                        {
+                            std::cout << "Upload.js executed successfully!" << std::endl;
+                        }
+                        else
+                        {
+                            std::cout << "Error: upload.js terminated abnormally." << std::endl;
+                        }
+                    }
                 }
                 else
                 {
-                    std::cout << " process terminated with error." << std::endl;
+                    std::cout << "Crawl process terminated with error." << std::endl;
                 }
             }
             else
             {
-                std::cout << " process terminated abnormally." << std::endl;
+                std::cout << "Crawl process terminated abnormally." << std::endl;
             }
         }
     }

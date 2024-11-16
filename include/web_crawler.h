@@ -10,6 +10,7 @@
 #include "page_metadata.h"
 #include <gumbo.h>
 
+#include "finalize_json.h" // Include the header for finalizeJsonFiles
 class WebCrawler
 {
 private:
@@ -25,7 +26,7 @@ private:
     std::atomic<int> activeThreads{0};
     std::unordered_map<std::string, std::chrono::steady_clock::time_point> domainLastRequest;
     std::chrono::milliseconds domainDelay{1000};
-
+    std::unordered_map<int, bool> threadFileContainsJson; 
     static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* userp);
     std::vector<std::string> extractLinks(const std::string& html, const std::string& baseUrl);
     void extractLinksHelper(GumboNode* node, std::vector<std::string>& links, const std::string& baseUrl);
@@ -33,10 +34,12 @@ private:
     void processUrl(const std::string& url, int depth, int threadId);
     void workerThread(int threadId);
 
+
 public:
     WebCrawler(int threads = 4, int depth = 3, int delayMs = 1000);
     ~WebCrawler();
     void start(const std::string& seedUrl);
     void stop();
     void waitForCompletion();
+    // void finalizeJsonFiles();
 };

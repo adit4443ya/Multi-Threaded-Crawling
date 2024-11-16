@@ -6,7 +6,7 @@
 #include "json.hpp"
 #include <filesystem>
 #include "thread_safe_queue.h"
-
+#include "finalize_json.h"
 using namespace std::chrono_literals;
 using json = nlohmann::json;
 namespace fs = std::filesystem;
@@ -175,8 +175,15 @@ void WebCrawler::processUrl(const std::string &url, int depth, int threadId)
 
         {
             std::lock_guard<std::mutex> lock(filesMutex);
+            //my code
+            if (threadFileContainsJson[threadId])
+            {
+                threadFiles[threadId] << ",\n";  // Add a comma if it's not the first object
+            }
+
             threadFiles[threadId] << j.dump(4) << std::endl;
             threadFiles[threadId].flush();
+            threadFileContainsJson[threadId] = true;
         }
 
         // Add new URLs to queue
@@ -242,6 +249,9 @@ WebCrawler::WebCrawler(int threads, int depth, int delayMs)
     {
         std::string filename = "crawler_output/thread_" + std::to_string(i) + ".json";
         threadFiles.emplace_back(filename);
+        threadFileContainsJson[i] = false;
+
+                threadFiles[i] << "[\n";
     }
 }
 
@@ -249,10 +259,18 @@ WebCrawler::~WebCrawler()
 {
     stop();
     curl_global_cleanup();
-    for (auto &file : threadFiles)
+    for (size_t i = 0; i < threadFiles.size(); ++i)
     {
-        file.close();
+        // Check if the corresponding file contains JSON data
+        
+
+           
+    
+
+        // Close the file
+        threadFiles[i].close();
     }
+   
 }
 
 void WebCrawler::start(const std::string &seedUrl)
@@ -275,14 +293,19 @@ void WebCrawler::stop()
 {
     // Implementation
     shouldStop = true;
-    for (auto &worker : workers)
-    {
-        if (worker.joinable())
-        {
-            worker.join();
+    std::future<void> future = std::async(std::launch::async, [&]() {
+        for (auto &worker : workers) {
+            if (worker.joinable()) {
+                worker.join();
+            }
         }
-    }
-    workers.clear();
+        system("node upload.js");
+        workers.clear();
+    });
+
+    // Optionally, wait for the future to complete if necessary
+    future.get();  // Wait for the task to complete if needed
+     
 }
 
 void WebCrawler::waitForCompletion()
@@ -293,4 +316,41 @@ void WebCrawler::waitForCompletion()
         std::this_thread::sleep_for(100ms);
     }
     stop();
+    
 }
+
+
+// void WebCrawler::finalizeJsonFiles()
+// {
+//     // Wait until all workers are done before finalizing the files
+//     // Ensure active threads are zero before continuing
+//     while (activeThreads > 0)
+//     {
+//         std::this_thread::sleep_for(100ms);
+//     }
+
+//     // Iterate through all files in the "crawler_output" directory
+//     for (const auto &entry : fs::directory_iterator("crawler_output"))
+//     {
+//         std::ifstream file(entry.path());
+//         std::string content((std::istreambuf_iterator<char>(file)),
+//                             std::istreambuf_iterator<char>());
+        
+//         // Check if the file is not empty
+//         if (!content.empty())
+//         {
+//             // Check if the content ends with a closing bracket (valid JSON array)
+//             if (content.back() != ']')
+//             {
+//                 std::ofstream outFile(entry.path(), std::ios::app);
+//                 outFile << "\n]"; // Append closing bracket if missing
+//             }
+//         }
+//         else
+//         {
+//             // If the file is empty, write an empty JSON array: "[]"
+//             std::ofstream outFile(entry.path());
+//             outFile << "[]";
+//         }
+//     }
+// }
