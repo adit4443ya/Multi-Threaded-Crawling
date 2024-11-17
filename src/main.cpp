@@ -86,10 +86,6 @@ int main(int argc, char *argv[])
                     std::cout << "Crawl process terminated with error." << std::endl;
                 }
             }
-            else
-            {
-                std::cout << "Crawl process terminated abnormally." << std::endl;
-            }
         }
     }
     catch (const std::exception &e)
