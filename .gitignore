@@ -1,1 +1,6 @@
 .vscode/
+# Ignore node_modules directory
+node_modules/
+
+# Ignore crawled_output directory
+crawler_output/
