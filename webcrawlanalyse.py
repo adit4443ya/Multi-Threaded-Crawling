@@ -150,11 +150,11 @@ def main():
     file2 = "crawl_data_2.json"
     output_file = "crawl_data.json"  # Path to the merged JSON file
 
-    # Step 1: Merge JSON files from multiple threads into one
+    # Merge JSON files from multiple threads into one
     print("Merging JSON files...")
     merge_json_files(file1, file2, output_file)
 
-    # Step 2: Load Merged Data
+    # Load Merged Data
     print("Loading data from merged JSON file...")
     data = load_json_file(output_file)
     if not data:
@@ -162,7 +162,7 @@ def main():
         return
     print(f"Loaded {len(data)} pages from {output_file}.")
 
-    # Step 3: Analyze Data
+    # Analyze Data
     print("Analyzing data...")
     analysis_results = analyze_data(data)
     print(f"Total Pages Crawled: {analysis_results['total_pages']}")
