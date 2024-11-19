@@ -1,3 +1,4 @@
+./clean.sh
 mkdir -p bin
 mkdir -p obj
 g++ -I./include -Wall -Wextra -std=c++17 -c src/main.cpp -o obj/main.o
